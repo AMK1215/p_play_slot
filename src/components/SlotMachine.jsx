@@ -556,14 +556,7 @@ export default function SlotMachine() {
       )}
       {/* Responsive CSS from user */}
       <style>{`
-.slot-machine-outer {
-  min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  overflow-x: hidden;
-  background: var(--slot-bg, #181624);
-}
-
+/* Desktop: >900px (default) */
 .slot-machine-main {
   display: flex;
   flex-direction: row;
@@ -574,7 +567,6 @@ export default function SlotMachine() {
   align-items: flex-start;
   gap: 18px;
 }
-
 .slot-panel {
   width: 210px;
   min-width: 170px;
@@ -588,7 +580,6 @@ export default function SlotMachine() {
   flex-direction: column;
   align-items: center;
 }
-
 .slot-center {
   flex: 1;
   min-width: 250px;
@@ -597,40 +588,12 @@ export default function SlotMachine() {
   align-items: center;
   position: relative;
 }
-
-.spin-banner {
-  background: linear-gradient(90deg, #ffd700 60%, #ff9800 100%);
-  color: #4b2e00;
-  font-size: 2rem;
-  font-weight: bold;
-  padding: 8px 40px;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 4px 16px #ffd70044;
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-}
-
-.win-display {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffd700;
-  color: #4b2e00;
-  font-size: 2rem;
-  font-weight: bold;
-  border-radius: 12px;
-  padding: 10px 28px;
-  z-index: 15;
-}
-
 .reels-row {
   display: flex;
   flex-direction: row;
   gap: 14px;
   margin: 30px 0 0 0;
 }
-
 .reel-border {
   border: 4px solid gold;
   border-radius: 16px;
@@ -646,7 +609,6 @@ export default function SlotMachine() {
   align-items: center;
   overflow: hidden;
 }
-
 .symbol-img {
   width: 46px;
   height: 46px;
@@ -654,31 +616,26 @@ export default function SlotMachine() {
   margin: 2px 0;
   border-radius: 10px;
 }
-
-/* Spin button always fixed bottom on mobile */
 .spin-btn {
   position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  width: 70px;
-  height: 70px;
+  right: 60px;
+  bottom: 60px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: radial-gradient(circle, #ffd700 60%, #ff9800 100%);
   box-shadow: 0 0 24px #ffd70088;
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: bold;
   border: none;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  transition: all .2s;
+  transition: transform 0.2s;
+  z-index: 10;
 }
-.spin-btn:active { transform: scale(0.95) translateX(-50%); }
-
-/* Credit bar always bottom, full width, smaller on mobile */
+.spin-btn:active { transform: scale(0.95); }
 .credit-bar {
   position: fixed;
   left: 0;
@@ -695,7 +652,7 @@ export default function SlotMachine() {
   box-shadow: 0 -2px 12px #000a;
 }
 
-/* ---- MOBILE BREAKPOINTS ---- */
+/* Tablet: 600–900px */
 @media (max-width: 900px) {
   .slot-machine-main {
     flex-direction: column;
@@ -719,53 +676,92 @@ export default function SlotMachine() {
     font-size: 14px;
   }
   .reels-row {
-    gap: 4px;
+    gap: 6px;
     justify-content: center;
   }
   .reel-border {
-    min-width: 40px;
+    min-width: 36px;
     max-width: 50px;
-    min-height: 140px;
-    max-height: 260px;
+    min-height: 120px;
+    max-height: 180px;
+    padding: 2px 0;
+    border-radius: 10px;
   }
   .symbol-img {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
   }
-  .spin-banner { font-size: 1.1rem; padding: 4px 16px; }
   .spin-btn {
-    bottom: 70px !important;
+    left: 50%;
+    right: unset;
+    bottom: 60px;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
   }
-  .slot-center {
-    margin-bottom: 40px !important;
+  .credit-bar {
+    font-size: 14px;
+    padding: 5px 0 2px 0;
   }
-  .win-display {
-    top: 20px !important;
-    font-size: 1.2rem !important;
-    padding: 8px 12px !important;
+}
+
+/* Small: 480–600px */
+@media (max-width: 600px) {
+  .slot-machine-main {
+    gap: 4px;
+    padding: 2px 0;
   }
   .slot-panel {
-    margin-bottom: 10px !important;
+    font-size: 14px;
+    padding: 6px 2px;
   }
-}
-
-@media (max-width: 600px) {
-  .credit-bar { font-size: 14px; padding: 5px 0 2px 0; }
-  .spin-btn { width: 52px; height: 52px; font-size: 1.3rem; }
+  .reels-row {
+    gap: 2px;
+    margin: 10px 0 0 0;
+  }
+  .reel-border {
+    min-width: 28px;
+    max-width: 34px;
+    min-height: 80px;
+    max-height: 120px;
+    padding: 1px 0;
+    border-radius: 7px;
+  }
+  .symbol-img {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    margin: 1px 0;
+  }
   .spin-btn {
-    bottom: 60px !important;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    bottom: 48px !important;
   }
-  .win-display {
-    font-size: 1rem !important;
-    padding: 6px 8px !important;
+  .credit-bar {
+    font-size: 11px;
+    padding: 3px 0 1px 0;
   }
 }
 
-/* Super compact for very small screens */
-@media (max-width: 420px) {
-  .credit-bar { font-size: 10px; padding: 2px 0 1px 0; }
-  .spin-btn { width: 40px; height: 40px; font-size: 1rem; }
+/* Ultra Small: <360px */
+@media (max-width: 360px) {
+  .slot-panel {
+    display: none;
+  }
+  .reels-row {
+    margin-top: 3px;
+  }
+}
+
+/* Always allow vertical scroll on tiny screens */
+.slot-machine-outer {
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
       `}</style>
     </div>
