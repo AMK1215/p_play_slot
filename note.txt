@@ -1,0 +1,103 @@
+// async function handleSpin() {
+  //   // Stop win sound if playing
+  //   if (winAudioRef.current) {
+  //     winAudioRef.current.pause();
+  //     winAudioRef.current.currentTime = 0;
+  //     winAudioRef.current = null;
+  //   }
+  //   if (isSpinning) return; // Prevent double spin
+  //   setIsSpinning(true);
+  //   const spinStart = Date.now(); // Start time for min spin duration
+  //   if (!isFreeSpins) setCredits(c => c - currentBet);
+  //   playSound(spinSound);
+
+  //   let newReels = Array.from({ length: COLS }, () => makeReelSymbols());
+  //   let flat = newReels.flat();
+  //   // --- WAYS PAYS LOGIC WITH MULTIPLIER ---
+  //   const { totalPayout, winSyms, multiplier } = calculateWaysPayoutWithMultiplier(flat, currentBet);
+  //   lastMultiplierRef.current = multiplier;
+
+  //   // Waterfall/tumble effect for 8+ symbols
+  //   let tumbleReels = newReels.map(col => [...col]);
+  //   let tumbleTotal = totalPayout;
+  //   let tumbleWinSyms = [...winSyms];
+  //   let tumbleCount = 0;
+  //   let tumbleDelay = 1100;
+  //   let tumbleTotalDuration = 0;
+  //   const maxTumbleDuration = 5000;
+  //   while (tumbleTotalDuration < maxTumbleDuration) {
+  //     const flatTumble = tumbleReels.flat();
+  //     const { totalPayout: tumblePayout, winSyms: tumbleSyms, multiplier: tumbleMultiplier } = calculateWaysPayoutWithMultiplier(flatTumble, currentBet);
+  //     if (tumbleSyms.length === 0) break;
+  //     tumbleCount++;
+  //     tumbleTotal += tumblePayout;
+  //     tumbleWinSyms = tumbleSyms;
+  //     // Animate the tumble
+  //     setWinSymbols(tumbleSyms);
+  //     playSound(tumbleSound);
+  //     setReels(tumbleReels.map(col => [...col]));
+  //     setSpinning(Array(COLS).fill(true));
+  //     await new Promise(res => setTimeout(res, tumbleDelay));
+  //     setSpinning(Array(COLS).fill(false));
+  //     setWinSymbols([]);
+  //     // Remove winning symbols and drop
+  //     const toRemove = new Set();
+  //     tumbleReels.forEach((col, colIdx) => {
+  //       col.forEach((s, rowIdx) => {
+  //         if (tumbleSyms.includes(s)) toRemove.add(`${colIdx},${rowIdx}`);
+  //       });
+  //     });
+  //     tumbleReels = tumbleReels.map((col, colIdx) => {
+  //       let filtered = col.filter((s, rowIdx) => !toRemove.has(`${colIdx},${rowIdx}`));
+  //       while (filtered.length < ROWS) {
+  //         filtered.unshift(getRandomSymbol());
+  //       }
+  //       return filtered;
+  //     });
+  //     await new Promise(res => setTimeout(res, 450));
+  //     tumbleTotalDuration += tumbleDelay + 450;
+  //   }
+  //   // Final update
+  //   setReels(tumbleReels.map(col => [...col]));
+  //   setWinSymbols(tumbleWinSyms);
+
+  //   // Update credits with winnings
+  //   if (tumbleTotal > 0) {
+  //     setCredits(c => c + tumbleTotal);
+  //     setLastWin(tumbleTotal);
+  //     setDisplayMultiplier(lastMultiplierRef.current);
+  //     playSound(winSound, true);
+  //   }
+
+  //   // Waterfall effect for initial spin (for visual consistency)
+  //   for (let i = 0; i < COLS; i++) {
+  //     setTimeout(() => {
+  //       setSpinning(prev => {
+  //         const arr = [...prev];
+  //         arr[i] = true;
+  //         return arr;
+  //       });
+  //       setReels(prev =>
+  //         prev.map((r, idx) => (idx === i ? newReels[idx] : r))
+  //       );
+  //       setTimeout(() => {
+  //         setSpinning(prev => {
+  //           const arr = [...prev];
+  //           arr[i] = false;
+  //           return arr;
+  //         });
+  //       }, 800);
+  //     }, i * 400);
+  //   }
+
+  //   setIsSpinning(false);
+  //   // Decrement autoplay count if active, with delay to ensure 7s per spin
+  //   if (autoplayRef.current && autoplayCount > 0) {
+  //     const elapsed = Date.now() - spinStart;
+  //     const minSpinTime = 7000; // 7 seconds
+  //     if (elapsed < minSpinTime) {
+  //       await new Promise(res => setTimeout(res, minSpinTime - elapsed));
+  //     }
+  //     setAutoplayCount(c => c - 1);
+  //   }
+  // }

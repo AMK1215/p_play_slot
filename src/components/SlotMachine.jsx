@@ -208,10 +208,13 @@ export default function SlotMachine() {
   const [displayWin, setDisplayWin] = useState(0); // For win animation
   const [displayMultiplier, setDisplayMultiplier] = useState(1); // For multiplier animation
   const [isSpinning, setIsSpinning] = useState(false); // For disabling spin btn
+  const [autoplayCount, setAutoplayCount] = useState(0); // Number of spins left in autoplay
+  const [autoplaySetting, setAutoplaySetting] = useState(10); // User-selected value
   const MIN_BET = 20;
   const MAX_BET = 100000;
   const winAudioRef = useRef(null);
   const lastMultiplierRef = useRef(1);
+  const autoplayRef = useRef(false);
 
   // Animate win amount
   useEffect(() => {
@@ -235,6 +238,24 @@ export default function SlotMachine() {
     }
   }, [lastWin]);
 
+  // Autoplay effect
+  useEffect(() => {
+    if (autoplayCount > 0 && !isSpinning && credits >= currentBet) {
+      autoplayRef.current = true;
+      handleSpin();
+    } else if (autoplayCount === 0) {
+      autoplayRef.current = false;
+    }
+  }, [autoplayCount, isSpinning, credits]);
+
+  // Stop autoplay if credits run out
+  useEffect(() => {
+    if (credits < currentBet && autoplayCount > 0) {
+      setAutoplayCount(0);
+      autoplayRef.current = false;
+    }
+  }, [credits, currentBet, autoplayCount]);
+
   function playSound(src, isWin = false) {
     if (isWin) {
       if (winAudioRef.current) {
@@ -252,6 +273,8 @@ export default function SlotMachine() {
     }
   }
 
+  
+
   async function handleSpin() {
     // Stop win sound if playing
     if (winAudioRef.current) {
@@ -260,16 +283,19 @@ export default function SlotMachine() {
       winAudioRef.current = null;
     }
     if (isSpinning) return; // Prevent double spin
+  
     setIsSpinning(true);
+    const spinStart = Date.now();
+  
     if (!isFreeSpins) setCredits(c => c - currentBet);
     playSound(spinSound);
-
+  
+    // -- Core Spin Logic (same as yours) --
     let newReels = Array.from({ length: COLS }, () => makeReelSymbols());
     let flat = newReels.flat();
-    // --- WAYS PAYS LOGIC WITH MULTIPLIER ---
     const { totalPayout, winSyms, multiplier } = calculateWaysPayoutWithMultiplier(flat, currentBet);
     lastMultiplierRef.current = multiplier;
-
+  
     // Waterfall/tumble effect for 8+ symbols
     let tumbleReels = newReels.map(col => [...col]);
     let tumbleTotal = totalPayout;
@@ -280,12 +306,12 @@ export default function SlotMachine() {
     const maxTumbleDuration = 5000;
     while (tumbleTotalDuration < maxTumbleDuration) {
       const flatTumble = tumbleReels.flat();
-      const { totalPayout: tumblePayout, winSyms: tumbleSyms, multiplier: tumbleMultiplier } = calculateWaysPayoutWithMultiplier(flatTumble, currentBet);
+      const { totalPayout: tumblePayout, winSyms: tumbleSyms, multiplier: tumbleMultiplier } =
+        calculateWaysPayoutWithMultiplier(flatTumble, currentBet);
       if (tumbleSyms.length === 0) break;
       tumbleCount++;
       tumbleTotal += tumblePayout;
       tumbleWinSyms = tumbleSyms;
-      // Animate the tumble
       setWinSymbols(tumbleSyms);
       playSound(tumbleSound);
       setReels(tumbleReels.map(col => [...col]));
@@ -313,15 +339,14 @@ export default function SlotMachine() {
     // Final update
     setReels(tumbleReels.map(col => [...col]));
     setWinSymbols(tumbleWinSyms);
-
-    // Update credits with winnings
+  
     if (tumbleTotal > 0) {
       setCredits(c => c + tumbleTotal);
       setLastWin(tumbleTotal);
       setDisplayMultiplier(lastMultiplierRef.current);
       playSound(winSound, true);
     }
-
+  
     // Waterfall effect for initial spin (for visual consistency)
     for (let i = 0; i < COLS; i++) {
       setTimeout(() => {
@@ -342,9 +367,22 @@ export default function SlotMachine() {
         }, 800);
       }, i * 400);
     }
-
+  
+    // *** Delay if needed to make the total spin at least 7 seconds ***
+    const elapsed = Date.now() - spinStart;
+    const minSpinTime = 7000; // ms (7 seconds)
+    if (elapsed < minSpinTime) {
+      await new Promise(res => setTimeout(res, minSpinTime - elapsed));
+    }
+  
     setIsSpinning(false);
+  
+    // For autoplay: decrement count after the delay
+    if (autoplayRef.current && autoplayCount > 0) {
+      setAutoplayCount(c => c - 1);
+    }
   }
+  
 
   function handleBetChange(amount) {
     setCurrentBet(bet => {
@@ -372,30 +410,42 @@ export default function SlotMachine() {
       background: "linear-gradient(180deg, #888 0%, #444 100%)"
     }}>
       <div className="slot-bg" />
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        background: "rgba(0,0,0,0.5)",
-        borderRadius: 24,
-        boxShadow: "0 0 32px #000a",
-        padding: 24,
-        zIndex: 2,
-        minWidth: 1100
-      }}>
-        {/* Left Panel */}
-        <div style={{
-          width: 200,
-          marginRight: 24,
-          background: "rgba(40,0,40,0.7)",
-          borderRadius: 16,
-          padding: 16,
-          color: "#ffd700",
-          fontWeight: "bold",
-          minHeight: 500,
+      <div
+        className="slot-main-container"
+        style={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-        }}>
+          alignItems: "center",
+          background: "rgba(0,0,0,0.5)",
+          borderRadius: 24,
+          boxShadow: "0 0 32px #000a",
+          padding: 24,
+          zIndex: 2,
+          minWidth: 320,
+          maxWidth: 1100,
+          width: "100%",
+          boxSizing: "border-box",
+          flexWrap: "wrap"
+        }}
+      >
+        {/* Left Panel */}
+        <div
+          className="slot-left-panel"
+          style={{
+            width: 200,
+            minWidth: 180,
+            marginRight: 24,
+            background: "rgba(40,0,40,0.7)",
+            borderRadius: 16,
+            padding: 16,
+            color: "#ffd700",
+            fontWeight: "bold",
+            minHeight: 500,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box"
+          }}
+        >
           <button style={{
             background: 'linear-gradient(90deg,#00eaff,#00bfff)',
             color: '#fff', fontWeight: 'bold', borderRadius: 8, border: 'none',
@@ -414,6 +464,50 @@ export default function SlotMachine() {
                 background: '#222', color: '#fff', borderRadius: 8, padding: '2px 12px', fontWeight: 'bold'
               }}>OFF</span>
             </div>
+          </div>
+          {/* Autoplay Controls */}
+          <div style={{ marginTop: 24, width: '100%', textAlign: 'center' }}>
+            <div style={{ color: '#ffd700', fontWeight: 'bold', fontSize: 16, marginBottom: 4 }}>AUTOPLAY</div>
+            <select
+              value={autoplaySetting}
+              onChange={e => setAutoplaySetting(Number(e.target.value))}
+              style={{ fontSize: 16, borderRadius: 6, padding: '4px 12px', marginBottom: 6 }}
+              disabled={isSpinning || autoplayCount > 0}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <button
+              onClick={() => {
+                if (autoplayCount > 0) {
+                  setAutoplayCount(0); // Stop autoplay
+                } else {
+                  setAutoplayCount(autoplaySetting); // Start autoplay
+                }
+              }}
+              style={{
+                marginLeft: 8,
+                fontSize: 16,
+                borderRadius: 6,
+                padding: '4px 16px',
+                background: autoplayCount > 0 ? '#e74c3c' : '#ffd700',
+                color: autoplayCount > 0 ? '#fff' : '#4b2e00',
+                fontWeight: 'bold',
+                border: 'none',
+                cursor: isSpinning ? 'not-allowed' : 'pointer',
+                marginTop: 4
+              }}
+              disabled={isSpinning}
+            >
+              {autoplayCount > 0 ? 'STOP' : 'START'}
+            </button>
+            {autoplayCount > 0 && (
+              <div style={{ color: '#ffd700', fontWeight: 'bold', fontSize: 14, marginTop: 4 }}>
+                {autoplayCount} left
+              </div>
+            )}
           </div>
           {/* Spin Button - now inside left panel */}
           <button
@@ -448,7 +542,17 @@ export default function SlotMachine() {
           </button>
         </div>
         {/* Center Reels and Banner */}
-        <div style={{display: "flex", flexDirection: "column", alignItems: "center", minWidth: 500}}>
+        <div
+          className="slot-center-panel"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minWidth: 240,
+            flex: 1,
+            boxSizing: "border-box"
+          }}
+        >
           <div style={{
             background: "linear-gradient(90deg, #ffd700 60%, #ff9800 100%)",
             color: "#4b2e00",
@@ -510,19 +614,24 @@ export default function SlotMachine() {
           </div>
         </div>
         {/* Right Panel */}
-        <div style={{
-          width: 200,
-          marginLeft: 24,
-          background: "rgba(40,0,40,0.7)",
-          borderRadius: 16,
-          padding: 16,
-          color: "#ffd700",
-          fontWeight: "bold",
-          minHeight: 500,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-        }}>
+        <div
+          className="slot-right-panel"
+          style={{
+            width: 200,
+            minWidth: 180,
+            marginLeft: 24,
+            background: "rgba(40,0,40,0.7)",
+            borderRadius: 16,
+            padding: 16,
+            color: "#ffd700",
+            fontWeight: "bold",
+            minHeight: 500,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box"
+          }}
+        >
           <div style={{
             fontSize: 28,
             color: '#ffd700',
@@ -541,31 +650,104 @@ export default function SlotMachine() {
         </div>
       </div>
       {/* Credit Bar - move to bottom center and style */}
-      <div className="credit-bar" style={{
-        position: "fixed",
-        left: "50%",
-        bottom: 24,
-        transform: "translateX(-50%)",
-        background: "rgba(0,0,0,0.7)",
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: 22,
-        padding: "10px 40px",
-        borderRadius: 16,
-        zIndex: 20,
-        boxShadow: "0 0 16px #000a"
-      }}>
+      <div
+        className="credit-bar"
+        style={{
+          position: "fixed",
+          left: "50%",
+          bottom: 24,
+          transform: "translateX(-50%)",
+          background: "rgba(0,0,0,0.7)",
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 22,
+          padding: "10px 40px",
+          borderRadius: 16,
+          zIndex: 20,
+          boxShadow: "0 0 16px #000a",
+          minWidth: 220,
+          maxWidth: "90vw",
+          textAlign: "center"
+        }}
+      >
         CREDIT Rp{credits.toLocaleString()} &nbsp; | &nbsp; BET Rp{currentBet.toLocaleString()}
       </div>
       {isFreeSpins && (
         <div style={{
           position: "absolute", top: 20, left: "50%", transform: "translateX(-50%)",
-          background: "#00eaff", color: "#fff", fontWeight: "bold", fontSize: 28,
-          padding: "10px 40px", borderRadius: 16, zIndex: 20, boxShadow: "0 0 16px #00eaff88"
+          background: "#00eaff", color: "#fff", fontWeight: "bold", fontSize: 20,
+          padding: "8px 20px", borderRadius: 16, zIndex: 20, boxShadow: "0 0 16px #00eaff88"
         }}>
           FREE SPINS! {freeSpinsLeft} LEFT
         </div>
       )}
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 900px) {
+          .slot-main-container {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 8px !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 0 !important;
+            overflow-x: hidden !important;
+          }
+          .slot-left-panel, .slot-right-panel {
+            min-width: 0 !important;
+            width: 100% !important;
+            margin: 0 0 12px 0 !important;
+            min-height: unset !important;
+            padding: 10px !important;
+          }
+          .slot-center-panel {
+            min-width: 0 !important;
+            width: 100vw !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: auto !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .slot-main-container {
+            padding: 2px !important;
+            border-radius: 0 !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+          }
+          .slot-left-panel, .slot-right-panel {
+            font-size: 14px !important;
+            padding: 6px !important;
+          }
+          .credit-bar {
+            font-size: 16px !important;
+            padding: 6px 8px !important;
+            border-radius: 8px !important;
+          }
+          .slot-center-panel {
+            font-size: 13px !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            overflow-x: auto !important;
+          }
+          .slot-center-panel > div[style*='flex-direction: row'] {
+            gap: 4px !important;
+          }
+          .slot-center-panel .symbol-img {
+            width: 36px !important;
+            height: 36px !important;
+          }
+        }
+        @media (max-width: 430px) {
+          .credit-bar {
+            font-size: 12px !important;
+            padding: 4px 2px !important;
+          }
+        }
+        body, html, #root {
+          overflow-x: hidden !important;
+        }
+      `}</style>
     </div>
   );
 }
