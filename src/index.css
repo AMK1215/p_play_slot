@@ -68,3 +68,19 @@ button:focus-visible {
 }
 
 /* Remove all slot-machine specific CSS blocks and media queries from this file. Keep only global and non-slot styles. */
+
+.reel-border-large {
+  border: 4px solid gold;
+  border-radius: 16px;
+  box-shadow: 0 0 16px gold, 0 0 8px #fff4;
+  background: rgba(40,0,40,0.7);
+  padding: 8px 4px;
+  min-width: 96px;
+  min-height: 576px;
+  max-height: 576px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}

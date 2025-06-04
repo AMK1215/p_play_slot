@@ -368,9 +368,9 @@ export default function SlotMachine() {
       }, i * 400);
     }
   
-    // *** Delay if needed to make the total spin at least 7 seconds ***
+    // *** Delay if needed to make the total spin at least 4 seconds ***
     const elapsed = Date.now() - spinStart;
-    const minSpinTime = 7000; // ms (7 seconds)
+    const minSpinTime = 4000; // ms (4 seconds)
     if (elapsed < minSpinTime) {
       await new Promise(res => setTimeout(res, minSpinTime - elapsed));
     }
@@ -516,7 +516,7 @@ export default function SlotMachine() {
           )}
           <div className="reels-row">
             {reels.map((symbols, colIdx) => (
-              <div key={colIdx} className="reel-border">
+              <div key={colIdx} className="reel-border-large">
                 <Reel symbols={symbols} spinning={spinning[colIdx]} winSymbols={winSymbols} />
               </div>
             ))}
@@ -530,15 +530,15 @@ export default function SlotMachine() {
             textAlign: 'center',
             marginBottom: 30
           }}>
-            Gates of<br />OLYMPUS<br /><span style={{fontSize: 18}}>1000</span>
+            {/* Gates of<br />OLYMPUS<br /><span style={{fontSize: 18}}>1000</span> */}
           </div>
-          <div style={{
+          {/* <div style={{
             width: 120, height: 220, background: 'rgba(255,255,255,0.05)', borderRadius: 16,
             margin: '0 auto', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            {/* Placeholder for Zeus image */}
+            
             <span role="img" aria-label="zeus" style={{fontSize: 90}}>⚡</span>
-          </div>
+          </div> */}
         </div>
       </div>
       {/* Credit Bar - always bottom, full width */}
