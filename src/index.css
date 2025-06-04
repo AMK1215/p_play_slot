@@ -369,7 +369,7 @@ button:focus-visible {
   z-index: 5;
 }
 
-@media (max-width: 900px) {
+/* @media (max-width: 900px) {
   .slot-machine-container {
     flex-direction: column !important;
     padding: 0 !important;
@@ -390,4 +390,196 @@ button:focus-visible {
     font-size: 1rem !important;
     padding: 8px 0 !important;
   }
+} */
+
+
+.slot-machine-outer {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow-x: hidden;
+  background: var(--slot-bg, #181624);
+}
+
+.slot-machine-main {
+  display: flex;
+  flex-direction: row;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 0;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.slot-panel {
+  width: 210px;
+  min-width: 170px;
+  background: rgba(40,0,40,0.7);
+  border-radius: 16px;
+  padding: 14px 10px;
+  box-sizing: border-box;
+  color: #ffd700;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slot-center {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.spin-banner {
+  background: linear-gradient(90deg, #ffd700 60%, #ff9800 100%);
+  color: #4b2e00;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 8px 40px;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 4px 16px #ffd70044;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.win-display {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffd700;
+  color: #4b2e00;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 10px 28px;
+  z-index: 15;
+}
+
+.reels-row {
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  margin: 30px 0 0 0;
+}
+
+.reel-border {
+  border: 4px solid gold;
+  border-radius: 16px;
+  box-shadow: 0 0 16px gold, 0 0 8px #fff4;
+  background: rgba(40,0,40,0.7);
+  padding: 4px 2px;
+  min-width: 62px;
+  max-width: 70px;
+  min-height: 252px;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.symbol-img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  margin: 2px 0;
+  border-radius: 10px;
+}
+
+/* Spin button always fixed bottom on mobile */
+.spin-btn {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd700 60%, #ff9800 100%);
+  box-shadow: 0 0 24px #ffd70088;
+  font-size: 2.2rem;
+  font-weight: bold;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all .2s;
+}
+.spin-btn:active { transform: scale(0.95) translateX(-50%); }
+
+/* Credit bar always bottom, full width, smaller on mobile */
+.credit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(40,0,40,0.92);
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 9px 0 4px 0;
+  letter-spacing: 1px;
+  z-index: 99;
+  box-shadow: 0 -2px 12px #000a;
+}
+
+/* ---- MOBILE BREAKPOINTS ---- */
+@media (max-width: 900px) {
+  .slot-machine-main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 6px 0;
+    max-width: 100vw;
+  }
+  .slot-panel {
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 10px 0;
+    min-height: unset;
+    padding: 10px 6px;
+    font-size: 16px;
+  }
+  .slot-center {
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    font-size: 14px;
+  }
+  .reels-row {
+    gap: 4px;
+    justify-content: center;
+  }
+  .reel-border {
+    min-width: 40px;
+    max-width: 50px;
+    min-height: 140px;
+    max-height: 260px;
+  }
+  .symbol-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+  .spin-banner { font-size: 1.1rem; padding: 4px 16px; }
+}
+
+@media (max-width: 600px) {
+  .credit-bar { font-size: 14px; padding: 5px 0 2px 0; }
+  .spin-btn { width: 52px; height: 52px; font-size: 1.3rem; }
+}
+
+/* Super compact for very small screens */
+@media (max-width: 420px) {
+  .credit-bar { font-size: 10px; padding: 2px 0 1px 0; }
+  .spin-btn { width: 40px; height: 40px; font-size: 1rem; }
 }

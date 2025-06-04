@@ -401,10 +401,51 @@ export default function SlotMachine() {
   }
 
   return (
-    <div className="slot-machine-outer">
-      <div className="slot-machine-main">
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      position: "relative",
+      background: "linear-gradient(180deg, #888 0%, #444 100%)"
+    }}>
+      <div className="slot-bg" />
+      <div
+        className="slot-main-container"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          background: "rgba(0,0,0,0.5)",
+          borderRadius: 24,
+          boxShadow: "0 0 32px #000a",
+          padding: 24,
+          zIndex: 2,
+          minWidth: 320,
+          maxWidth: 1100,
+          width: "100%",
+          boxSizing: "border-box",
+          flexWrap: "wrap"
+        }}
+      >
         {/* Left Panel */}
-        <div className="slot-panel">
+        <div
+          className="slot-left-panel"
+          style={{
+            width: 200,
+            minWidth: 180,
+            marginRight: 24,
+            background: "rgba(40,0,40,0.7)",
+            borderRadius: 16,
+            padding: 16,
+            color: "#ffd700",
+            fontWeight: "bold",
+            minHeight: 500,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box"
+          }}
+        >
           <button style={{
             background: 'linear-gradient(90deg,#00eaff,#00bfff)',
             color: '#fff', fontWeight: 'bold', borderRadius: 8, border: 'none',
@@ -501,11 +542,47 @@ export default function SlotMachine() {
           </button>
         </div>
         {/* Center Reels and Banner */}
-        <div className="slot-center">
-          <div className="spin-banner">SPIN TO WIN!</div>
+        <div
+          className="slot-center-panel"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minWidth: 240,
+            flex: 1,
+            boxSizing: "border-box"
+          }}
+        >
+          <div style={{
+            background: "linear-gradient(90deg, #ffd700 60%, #ff9800 100%)",
+            color: "#4b2e00",
+            fontSize: "2rem",
+            fontWeight: "bold",
+            padding: "8px 40px",
+            borderRadius: "0 0 18px 18px",
+            boxShadow: "0 4px 16px #ffd70044",
+            letterSpacing: "2px",
+            marginBottom: 12
+          }}>
+            SPIN TO WIN!
+          </div>
           {/* Animated Win Display */}
           {displayWin > 0 && (
-            <div className="win-display">
+            <div style={{
+              position: "absolute",
+              top: 80,
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "#ffd700",
+              color: "#4b2e00",
+              fontWeight: "bold",
+              fontSize: 38,
+              padding: "10px 60px",
+              borderRadius: 18,
+              zIndex: 30,
+              boxShadow: "0 0 24px #ffd70088",
+              animation: "win-pop 0.7s cubic-bezier(.68,-0.55,.27,1.55)"
+            }}>
               WIN Rp{displayWin.toLocaleString()}
               {displayMultiplier > 1 && (
                 <span style={{ fontSize: 30, color: '#0a0', marginLeft: 18, fontWeight: 900 }}>
@@ -514,16 +591,47 @@ export default function SlotMachine() {
               )}
             </div>
           )}
-          <div className="reels-row">
+          <div style={{display: "flex", flexDirection: "row", gap: 18, marginTop: 24}}>
             {reels.map((symbols, colIdx) => (
-              <div key={colIdx} className="reel-border">
+              <div key={colIdx} style={{
+                border: "4px solid gold",
+                borderRadius: 16,
+                boxShadow: "0 0 16px gold, 0 0 8px #fff4",
+                background: "rgba(40,0,40,0.7)",
+                padding: "4px 2px",
+                minWidth: 76,
+                minHeight: 432,
+                maxHeight: 432,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}>
                 <Reel symbols={symbols} spinning={spinning[colIdx]} winSymbols={winSymbols} />
               </div>
             ))}
           </div>
         </div>
         {/* Right Panel */}
-        <div className="slot-panel">
+        <div
+          className="slot-right-panel"
+          style={{
+            width: 200,
+            minWidth: 180,
+            marginLeft: 24,
+            background: "rgba(40,0,40,0.7)",
+            borderRadius: 16,
+            padding: 16,
+            color: "#ffd700",
+            fontWeight: "bold",
+            minHeight: 500,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box"
+          }}
+        >
           <div style={{
             fontSize: 28,
             color: '#ffd700',
@@ -541,8 +649,27 @@ export default function SlotMachine() {
           </div>
         </div>
       </div>
-      {/* Credit Bar - always bottom, full width */}
-      <div className="credit-bar">
+      {/* Credit Bar - move to bottom center and style */}
+      <div
+        className="credit-bar"
+        style={{
+          position: "fixed",
+          left: "50%",
+          bottom: 24,
+          transform: "translateX(-50%)",
+          background: "rgba(0,0,0,0.7)",
+          color: "#fff",
+          fontWeight: "bold",
+          fontSize: 22,
+          padding: "10px 40px",
+          borderRadius: 16,
+          zIndex: 20,
+          boxShadow: "0 0 16px #000a",
+          minWidth: 220,
+          maxWidth: "90vw",
+          textAlign: "center"
+        }}
+      >
         CREDIT Rp{credits.toLocaleString()} &nbsp; | &nbsp; BET Rp{currentBet.toLocaleString()}
       </div>
       {isFreeSpins && (
@@ -554,198 +681,72 @@ export default function SlotMachine() {
           FREE SPINS! {freeSpinsLeft} LEFT
         </div>
       )}
-      {/* Responsive CSS from user */}
+      {/* Responsive styles */}
       <style>{`
-.slot-machine-outer {
-  min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  overflow-x: hidden;
-  background: var(--slot-bg, #181624);
-}
-
-.slot-machine-main {
-  display: flex;
-  flex-direction: row;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 0;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 18px;
-}
-
-.slot-panel {
-  width: 210px;
-  min-width: 170px;
-  background: rgba(40,0,40,0.7);
-  border-radius: 16px;
-  padding: 14px 10px;
-  box-sizing: border-box;
-  color: #ffd700;
-  font-weight: bold;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.slot-center {
-  flex: 1;
-  min-width: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.spin-banner {
-  background: linear-gradient(90deg, #ffd700 60%, #ff9800 100%);
-  color: #4b2e00;
-  font-size: 2rem;
-  font-weight: bold;
-  padding: 8px 40px;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 4px 16px #ffd70044;
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-}
-
-.win-display {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffd700;
-  color: #4b2e00;
-  font-size: 2rem;
-  font-weight: bold;
-  border-radius: 12px;
-  padding: 10px 28px;
-  z-index: 15;
-}
-
-.reels-row {
-  display: flex;
-  flex-direction: row;
-  gap: 14px;
-  margin: 30px 0 0 0;
-}
-
-.reel-border {
-  border: 4px solid gold;
-  border-radius: 16px;
-  box-shadow: 0 0 16px gold, 0 0 8px #fff4;
-  background: rgba(40,0,40,0.7);
-  padding: 4px 2px;
-  min-width: 62px;
-  max-width: 70px;
-  min-height: 252px;
-  max-height: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-}
-
-.symbol-img {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-  margin: 2px 0;
-  border-radius: 10px;
-}
-
-/* Spin button always fixed bottom on mobile */
-.spin-btn {
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffd700 60%, #ff9800 100%);
-  box-shadow: 0 0 24px #ffd70088;
-  font-size: 2.2rem;
-  font-weight: bold;
-  border: none;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  transition: all .2s;
-}
-.spin-btn:active { transform: scale(0.95) translateX(-50%); }
-
-/* Credit bar always bottom, full width, smaller on mobile */
-.credit-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(40,0,40,0.92);
-  color: #ffd700;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-align: center;
-  padding: 9px 0 4px 0;
-  letter-spacing: 1px;
-  z-index: 99;
-  box-shadow: 0 -2px 12px #000a;
-}
-
-/* ---- MOBILE BREAKPOINTS ---- */
-@media (max-width: 900px) {
-  .slot-machine-main {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    padding: 6px 0;
-    max-width: 100vw;
-  }
-  .slot-panel {
-    width: 100%;
-    min-width: 0;
-    margin: 0 0 10px 0;
-    min-height: unset;
-    padding: 10px 6px;
-    font-size: 16px;
-  }
-  .slot-center {
-    min-width: 0;
-    width: 100%;
-    padding: 0;
-    font-size: 14px;
-  }
-  .reels-row {
-    gap: 4px;
-    justify-content: center;
-  }
-  .reel-border {
-    min-width: 40px;
-    max-width: 50px;
-    min-height: 140px;
-    max-height: 260px;
-  }
-  .symbol-img {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
-  }
-  .spin-banner { font-size: 1.1rem; padding: 4px 16px; }
-}
-
-@media (max-width: 600px) {
-  .credit-bar { font-size: 14px; padding: 5px 0 2px 0; }
-  .spin-btn { width: 52px; height: 52px; font-size: 1.3rem; }
-}
-
-/* Super compact for very small screens */
-@media (max-width: 420px) {
-  .credit-bar { font-size: 10px; padding: 2px 0 1px 0; }
-  .spin-btn { width: 40px; height: 40px; font-size: 1rem; }
-}
+        @media (max-width: 900px) {
+          .slot-main-container {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 8px !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 0 !important;
+            overflow-x: hidden !important;
+          }
+          .slot-left-panel, .slot-right-panel {
+            min-width: 0 !important;
+            width: 100% !important;
+            margin: 0 0 12px 0 !important;
+            min-height: unset !important;
+            padding: 10px !important;
+          }
+          .slot-center-panel {
+            min-width: 0 !important;
+            width: 100vw !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: auto !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .slot-main-container {
+            padding: 2px !important;
+            border-radius: 0 !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+          }
+          .slot-left-panel, .slot-right-panel {
+            font-size: 14px !important;
+            padding: 6px !important;
+          }
+          .credit-bar {
+            font-size: 16px !important;
+            padding: 6px 8px !important;
+            border-radius: 8px !important;
+          }
+          .slot-center-panel {
+            font-size: 13px !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            overflow-x: auto !important;
+          }
+          .slot-center-panel > div[style*='flex-direction: row'] {
+            gap: 4px !important;
+          }
+          .slot-center-panel .symbol-img {
+            width: 36px !important;
+            height: 36px !important;
+          }
+        }
+        @media (max-width: 430px) {
+          .credit-bar {
+            font-size: 12px !important;
+            padding: 4px 2px !important;
+          }
+        }
+        body, html, #root {
+          overflow-x: hidden !important;
+        }
       `}</style>
     </div>
   );
