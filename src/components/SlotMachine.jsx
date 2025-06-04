@@ -734,11 +734,32 @@ export default function SlotMachine() {
     border-radius: 7px;
   }
   .spin-banner { font-size: 1.1rem; padding: 4px 16px; }
+  .spin-btn {
+    bottom: 70px !important;
+  }
+  .slot-center {
+    margin-bottom: 40px !important;
+  }
+  .win-display {
+    top: 20px !important;
+    font-size: 1.2rem !important;
+    padding: 8px 12px !important;
+  }
+  .slot-panel {
+    margin-bottom: 10px !important;
+  }
 }
 
 @media (max-width: 600px) {
   .credit-bar { font-size: 14px; padding: 5px 0 2px 0; }
   .spin-btn { width: 52px; height: 52px; font-size: 1.3rem; }
+  .spin-btn {
+    bottom: 60px !important;
+  }
+  .win-display {
+    font-size: 1rem !important;
+    padding: 6px 8px !important;
+  }
 }
 
 /* Super compact for very small screens */
